@@ -16,9 +16,12 @@ function App() {
       return
     }
 
+    // Clear all previous results when starting a new scan
     setScanning(true)
     setError(null)
     setResults(null)
+    setComplianceResults(null)
+    setAnalyzing(false)
 
     try {
       // Validate URL format
@@ -178,7 +181,9 @@ function App() {
   const analyzeCompliance = async (axeResults, targetUrl) => {
     setAnalyzing(true)
     try {
-      const response = await fetch('http://localhost:8000/analyze', {
+      // Use environment variable for API URL, default to localhost for development
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -221,7 +226,17 @@ function App() {
           <input
             type="text"
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={(e) => {
+              const newUrl = e.target.value
+              // Clear results immediately when user types (if there are any results)
+              if (results || complianceResults) {
+                setResults(null)
+                setComplianceResults(null)
+                setError(null)
+                setAnalyzing(false)
+              }
+              setUrl(newUrl)
+            }}
             onKeyPress={handleKeyPress}
             placeholder="Enter URL (e.g., https://example.com)"
             className="url-input"
