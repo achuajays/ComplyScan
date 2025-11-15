@@ -4,8 +4,8 @@ from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import os
 
-from app.services.compliance_checker import ComplianceChecker, AxeCoreResult
-from app.services.ai_recommendations import AIRecommendationService
+from services.compliance_checker import ComplianceChecker, AxeCoreResult
+from services.ai_recommendations import AIRecommendationService
 
 app = FastAPI(title="ComplyScan API", version="1.0.0")
 
@@ -121,7 +121,7 @@ if __name__ == "__main__":
    
     
     uvicorn.run(
-        "app.main:app",
+        "main:app",
         host="0.0.0.0",
         port=8000,
         reload=True
